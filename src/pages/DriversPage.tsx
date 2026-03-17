@@ -26,27 +26,76 @@ interface DriverStat {
   seasons: number
 }
 
+interface LiveStats {
+  wins: number
+  podiums: number
+  poles: number
+}
+
+// Ergast/Jolpica driverId mapping from OpenF1 acronym
+const ERGAST_ID: Record<string, string> = {
+  VER: 'max_verstappen', NOR: 'norris', LEC: 'leclerc', HAM: 'hamilton',
+  PIA: 'piastri', SAI: 'sainz', RUS: 'russell', ALO: 'alonso',
+  ANT: 'antonelli', HUL: 'hulkenberg', TSU: 'tsunoda', STR: 'stroll',
+  ALB: 'albon', OCO: 'ocon', GAS: 'gasly', BEA: 'bearman',
+  DOO: 'doohan', BOT: 'bottas', HAD: 'hadjar', LAW: 'lawson',
+}
+
+// Static fallback — base info (dob, nationality, championships, seasons) + last-known numbers
+// wins/podiums/poles are overridden by live API fetch when detail opens
 const DRIVER_STATS: Record<string, DriverStat> = {
-  VER: { dob: "1997-09-30", nat: "Dutch", wins: 63, podiums: 115, poles: 40, championships: 4, seasons: 10 },
-  NOR: { dob: "1999-11-13", nat: "British", wins: 4, podiums: 27, poles: 6, championships: 0, seasons: 7 },
-  LEC: { dob: "1997-10-16", nat: "Monégasque", wins: 8, podiums: 41, poles: 26, championships: 0, seasons: 7 },
-  HAM: { dob: "1985-01-07", nat: "British", wins: 104, podiums: 202, poles: 104, championships: 7, seasons: 18 },
-  PIA: { dob: "2001-04-06", nat: "Australian", wins: 3, podiums: 15, poles: 2, championships: 0, seasons: 3 },
-  SAI: { dob: "1994-09-01", nat: "Spanish", wins: 4, podiums: 26, poles: 6, championships: 0, seasons: 10 },
-  RUS: { dob: "1998-02-15", nat: "British", wins: 3, podiums: 20, poles: 5, championships: 0, seasons: 6 },
-  ALO: { dob: "1981-07-29", nat: "Spanish", wins: 32, podiums: 106, poles: 22, championships: 2, seasons: 22 },
-  ANT: { dob: "2006-08-25", nat: "Italian", wins: 0, podiums: 0, poles: 0, championships: 0, seasons: 1 },
-  HUL: { dob: "1987-08-19", nat: "German", wins: 0, podiums: 0, poles: 1, championships: 0, seasons: 14 },
-  TSU: { dob: "2000-05-11", nat: "Japanese", wins: 0, podiums: 0, poles: 0, championships: 0, seasons: 5 },
-  STR: { dob: "1998-10-29", nat: "Canadian", wins: 0, podiums: 3, poles: 1, championships: 0, seasons: 8 },
-  ALB: { dob: "1996-03-23", nat: "Thai", wins: 0, podiums: 2, poles: 0, championships: 0, seasons: 5 },
-  OCO: { dob: "1996-09-17", nat: "French", wins: 1, podiums: 3, poles: 0, championships: 0, seasons: 8 },
-  GAS: { dob: "1996-02-07", nat: "French", wins: 1, podiums: 4, poles: 1, championships: 0, seasons: 8 },
-  BEA: { dob: "2005-05-08", nat: "British", wins: 0, podiums: 0, poles: 0, championships: 0, seasons: 1 },
-  DOO: { dob: "2003-01-20", nat: "Australian", wins: 0, podiums: 0, poles: 0, championships: 0, seasons: 1 },
-  BOT: { dob: "1989-08-28", nat: "Finnish", wins: 10, podiums: 67, poles: 20, championships: 0, seasons: 13 },
-  HAD: { dob: "2004-09-28", nat: "French", wins: 0, podiums: 0, poles: 0, championships: 0, seasons: 1 },
-  LAW: { dob: "2002-02-11", nat: "New Zealander", wins: 0, podiums: 0, poles: 0, championships: 0, seasons: 2 },
+  VER: { dob: "1997-09-30", nat: "Dutch",          wins: 71,  podiums: 122, poles: 62,  championships: 4, seasons: 11 },
+  NOR: { dob: "1999-11-13", nat: "British",         wins: 11,  podiums: 37,  poles: 29,  championships: 1, seasons: 7  },
+  LEC: { dob: "1997-10-16", nat: "Monégasque",      wins: 8,   podiums: 44,  poles: 32,  championships: 0, seasons: 8  },
+  HAM: { dob: "1985-01-07", nat: "British",         wins: 105, podiums: 206, poles: 117, championships: 7, seasons: 18 },
+  PIA: { dob: "2001-04-06", nat: "Australian",      wins: 9,   podiums: 22,  poles: 14,  championships: 0, seasons: 4  },
+  SAI: { dob: "1994-09-01", nat: "Spanish",         wins: 4,   podiums: 28,  poles: 11,  championships: 0, seasons: 11 },
+  RUS: { dob: "1998-02-15", nat: "British",         wins: 6,   podiums: 22,  poles: 13,  championships: 0, seasons: 7  },
+  ALO: { dob: "1981-07-29", nat: "Spanish",         wins: 32,  podiums: 108, poles: 23,  championships: 2, seasons: 23 },
+  ANT: { dob: "2006-08-25", nat: "Italian",         wins: 1,   podiums: 1,   poles: 1,   championships: 0, seasons: 1  },
+  HUL: { dob: "1987-08-19", nat: "German",          wins: 0,   podiums: 0,   poles: 1,   championships: 0, seasons: 15 },
+  TSU: { dob: "2000-05-11", nat: "Japanese",        wins: 0,   podiums: 0,   poles: 1,   championships: 0, seasons: 5  },
+  STR: { dob: "1998-10-29", nat: "Canadian",        wins: 0,   podiums: 3,   poles: 1,   championships: 0, seasons: 9  },
+  ALB: { dob: "1996-03-23", nat: "Thai",            wins: 0,   podiums: 2,   poles: 1,   championships: 0, seasons: 6  },
+  OCO: { dob: "1996-09-17", nat: "French",          wins: 1,   podiums: 3,   poles: 0,   championships: 0, seasons: 8  },
+  GAS: { dob: "1996-02-07", nat: "French",          wins: 1,   podiums: 4,   poles: 0,   championships: 0, seasons: 8  },
+  BEA: { dob: "2005-05-08", nat: "British",         wins: 0,   podiums: 0,   poles: 0,   championships: 0, seasons: 1  },
+  DOO: { dob: "2003-01-20", nat: "Australian",      wins: 0,   podiums: 0,   poles: 0,   championships: 0, seasons: 1  },
+  BOT: { dob: "1989-08-28", nat: "Finnish",         wins: 10,  podiums: 67,  poles: 19,  championships: 0, seasons: 13 },
+  HAD: { dob: "2004-09-28", nat: "French",          wins: 0,   podiums: 1,   poles: 1,   championships: 0, seasons: 1  },
+  LAW: { dob: "2002-02-11", nat: "New Zealander",   wins: 0,   podiums: 0,   poles: 0,   championships: 0, seasons: 2  },
+}
+
+async function fetchLiveStats(acronym: string): Promise<LiveStats | null> {
+  const ergastId = ERGAST_ID[acronym]
+  if (!ergastId) return null
+  try {
+    const base = 'https://api.jolpi.ca/ergast/f1'
+    // Fetch wins and poles in parallel
+    const [winsRes, polesRes] = await Promise.all([
+      axios.get(`${base}/drivers/${ergastId}/results/1/`, { params: { limit: 1 }, timeout: 8000 }),
+      axios.get(`${base}/drivers/${ergastId}/qualifying/1/`, { params: { limit: 1 }, timeout: 8000 }),
+    ])
+    const wins = parseInt(winsRes.data?.MRData?.total ?? '0', 10)
+    const poles = parseInt(polesRes.data?.MRData?.total ?? '0', 10)
+
+    // Fetch all race results to count podiums (paginate if needed)
+    const firstPage = await axios.get(`${base}/drivers/${ergastId}/results/`, { params: { limit: 500 }, timeout: 10000 })
+    const total = parseInt(firstPage.data?.MRData?.total ?? '0', 10)
+    let allRaces = firstPage.data?.MRData?.RaceTable?.Races ?? []
+    if (total > 500) {
+      const second = await axios.get(`${base}/drivers/${ergastId}/results/`, { params: { limit: 500, offset: 500 }, timeout: 10000 })
+      allRaces = [...allRaces, ...(second.data?.MRData?.RaceTable?.Races ?? [])]
+    }
+    const podiums = allRaces.filter((r: { Results: Array<{ position: string }> }) => {
+      const pos = parseInt(r.Results?.[0]?.position ?? '99', 10)
+      return pos >= 1 && pos <= 3
+    }).length
+
+    return { wins, podiums, poles }
+  } catch {
+    return null
+  }
 }
 
 function calcAge(dob: string): number {
@@ -69,6 +118,20 @@ interface DriverDetailProps {
 function DriverDetail({ driver, isMobile, onClose }: DriverDetailProps) {
   const stats = DRIVER_STATS[driver.name_acronym]
   const teamColor = getDriverColor(driver)
+  const [liveStats, setLiveStats] = useState<LiveStats | null>(null)
+  const [loadingLive, setLoadingLive] = useState(true)
+
+  useEffect(() => {
+    setLoadingLive(true)
+    fetchLiveStats(driver.name_acronym).then((result) => {
+      setLiveStats(result)
+      setLoadingLive(false)
+    })
+  }, [driver.name_acronym])
+
+  const wins = liveStats?.wins ?? stats?.wins ?? '—'
+  const podiums = liveStats?.podiums ?? stats?.podiums ?? '—'
+  const poles = liveStats?.poles ?? stats?.poles ?? '—'
 
   const overlayVariants = isMobile
     ? {
@@ -83,11 +146,11 @@ function DriverDetail({ driver, isMobile, onClose }: DriverDetailProps) {
       }
 
   const statTiles = [
-    { emoji: '🏆', label: 'Championships', value: stats?.championships ?? '—' },
-    { emoji: '🥇', label: 'Wins', value: stats?.wins ?? '—' },
-    { emoji: '🏅', label: 'Podiums', value: stats?.podiums ?? '—' },
-    { emoji: '⏱', label: 'Poles', value: stats?.poles ?? '—' },
-    { emoji: '📅', label: 'Seasons in F1', value: stats?.seasons ?? '—' },
+    { emoji: '🏆', label: 'Championships', value: stats?.championships ?? '—', live: false },
+    { emoji: '🥇', label: 'Wins',          value: wins,                          live: true  },
+    { emoji: '🏅', label: 'Podiums',       value: podiums,                       live: true  },
+    { emoji: '⏱',  label: 'Poles',         value: poles,                         live: true  },
+    { emoji: '📅', label: 'Seasons in F1', value: stats?.seasons ?? '—',         live: false },
   ]
 
   return (
@@ -272,41 +335,48 @@ function DriverDetail({ driver, isMobile, onClose }: DriverDetailProps) {
             gap: '0.75rem',
           }}
         >
-          {statTiles.map((tile) => (
-            <div
-              key={tile.label}
-              style={{
-                backgroundColor: '#1A1A1A',
-                border: '1px solid #2A2A2A',
-                borderRadius: '6px',
-                padding: '0.875rem 1rem',
-              }}
-            >
-              <div style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>{tile.emoji}</div>
+          {statTiles.map((tile) => {
+            const isLoading = tile.live && loadingLive
+            return (
               <div
+                key={tile.label}
                 style={{
-                  fontFamily: '"Bebas Neue", cursive',
-                  fontSize: '1.75rem',
-                  color: '#F0F0F0',
-                  lineHeight: 1,
+                  backgroundColor: '#1A1A1A',
+                  border: '1px solid #2A2A2A',
+                  borderRadius: '6px',
+                  padding: '0.875rem 1rem',
                 }}
               >
-                {tile.value}
+                <div style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>{tile.emoji}</div>
+                <div
+                  style={{
+                    fontFamily: '"Bebas Neue", cursive',
+                    fontSize: '1.75rem',
+                    color: isLoading ? '#2A2A2A' : '#F0F0F0',
+                    lineHeight: 1,
+                    minWidth: '2ch',
+                    backgroundColor: isLoading ? '#2A2A2A' : 'transparent',
+                    borderRadius: isLoading ? '4px' : undefined,
+                    animation: isLoading ? 'pulse 1.5s ease-in-out infinite' : undefined,
+                  }}
+                >
+                  {isLoading ? '—' : tile.value}
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.65rem',
+                    color: '#666',
+                    marginTop: '2px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {tile.label}
+                </div>
               </div>
-              <div
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '0.65rem',
-                  color: '#666',
-                  marginTop: '2px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                {tile.label}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </motion.div>
     </motion.div>
