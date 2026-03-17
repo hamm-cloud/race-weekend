@@ -1,5 +1,6 @@
 import TimingTower from '../components/timing/TimingTower'
 import RaceControlFeed from '../components/race-control/RaceControlFeed'
+import TeamRadioFeed from '../components/radio/TeamRadioFeed'
 import WeatherWidget from '../components/weather/WeatherWidget'
 import { useDrivers, useTimingData } from '../hooks/useOpenF1'
 import type { Session } from '../hooks/useOpenF1'
@@ -7,9 +8,10 @@ import type { Session } from '../hooks/useOpenF1'
 interface TimingPageProps {
   session: Session | null
   sessionLoading: boolean
+  isLive: boolean
 }
 
-export default function TimingPage({ session, sessionLoading }: TimingPageProps) {
+export default function TimingPage({ session, sessionLoading, isLive }: TimingPageProps) {
   const drivers = useDrivers(session?.session_key ?? null)
   const { intervals, lastLaps, stints } = useTimingData(session?.session_key ?? null, 5000)
 
@@ -57,6 +59,11 @@ export default function TimingPage({ session, sessionLoading }: TimingPageProps)
         loading={sessionLoading}
       />
       <RaceControlFeed session={session} />
+      <TeamRadioFeed
+        sessionKey={session?.session_key ?? null}
+        isLive={isLive}
+        drivers={drivers}
+      />
     </div>
   )
 }

@@ -44,7 +44,7 @@ export default function App() {
               transition={{ duration: 0.2 }}
             >
               {activeTab === 'timing' && (
-                <TimingPage session={session} sessionLoading={sessionLoading} />
+                <TimingPage session={session} sessionLoading={sessionLoading} isLive={isLive} />
               )}
               {activeTab === 'track' && (
                 <TrackPage session={session} isLive={isLive} />
