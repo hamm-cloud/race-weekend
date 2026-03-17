@@ -42,31 +42,6 @@ const CIRCUIT_PATH = `
 `
 
 // Mock positions when no real data
-const MOCK_POSITIONS = new Map([
-  [1, { x: -1000, y: 500 }],
-  [4, { x: -800, y: 600 }],
-  [16, { x: -600, y: 700 }],
-  [44, { x: -400, y: 800 }],
-  [81, { x: -200, y: 900 }],
-  [55, { x: 0, y: 1000 }],
-  [63, { x: 200, y: 900 }],
-  [14, { x: 400, y: 800 }],
-  [10, { x: 600, y: 700 }],
-  [23, { x: 800, y: 600 }],
-])
-
-const MOCK_DRIVERS: Driver[] = [
-  { driver_number: 1, broadcast_name: 'M.VERSTAPPEN', full_name: 'Max Verstappen', name_acronym: 'VER', team_name: 'Red Bull Racing', team_colour: '3671C6', country_code: 'NED', headshot_url: '', session_key: 0 },
-  { driver_number: 4, broadcast_name: 'L.NORRIS', full_name: 'Lando Norris', name_acronym: 'NOR', team_name: 'McLaren', team_colour: 'FF8000', country_code: 'GBR', headshot_url: '', session_key: 0 },
-  { driver_number: 16, broadcast_name: 'C.LECLERC', full_name: 'Charles Leclerc', name_acronym: 'LEC', team_name: 'Ferrari', team_colour: 'E8002D', country_code: 'MON', headshot_url: '', session_key: 0 },
-  { driver_number: 44, broadcast_name: 'L.HAMILTON', full_name: 'Lewis Hamilton', name_acronym: 'HAM', team_name: 'Ferrari', team_colour: 'E8002D', country_code: 'GBR', headshot_url: '', session_key: 0 },
-  { driver_number: 81, broadcast_name: 'O.PIASTRI', full_name: 'Oscar Piastri', name_acronym: 'PIA', team_name: 'McLaren', team_colour: 'FF8000', country_code: 'AUS', headshot_url: '', session_key: 0 },
-  { driver_number: 55, broadcast_name: 'C.SAINZ', full_name: 'Carlos Sainz', name_acronym: 'SAI', team_name: 'Williams', team_colour: '64C4FF', country_code: 'ESP', headshot_url: '', session_key: 0 },
-  { driver_number: 63, broadcast_name: 'G.RUSSELL', full_name: 'George Russell', name_acronym: 'RUS', team_name: 'Mercedes', team_colour: '00D2BE', country_code: 'GBR', headshot_url: '', session_key: 0 },
-  { driver_number: 14, broadcast_name: 'F.ALONSO', full_name: 'Fernando Alonso', name_acronym: 'ALO', team_name: 'Aston Martin', team_colour: '358C75', country_code: 'ESP', headshot_url: '', session_key: 0 },
-  { driver_number: 10, broadcast_name: 'P.GASLY', full_name: 'Pierre Gasly', name_acronym: 'GAS', team_name: 'Alpine', team_colour: 'FF87BC', country_code: 'FRA', headshot_url: '', session_key: 0 },
-  { driver_number: 23, broadcast_name: 'A.ALBON', full_name: 'Alexander Albon', name_acronym: 'ALB', team_name: 'Williams', team_colour: '64C4FF', country_code: 'THA', headshot_url: '', session_key: 0 },
-]
 
 function normalizePositions(positions: Map<number, { x: number; y: number }>) {
   if (positions.size === 0) return { normalized: new Map(), minX: 0, minY: 0, rangeX: 1, rangeY: 1 }
