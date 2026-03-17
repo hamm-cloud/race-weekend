@@ -47,7 +47,7 @@ export default function App() {
                 <TimingPage session={session} sessionLoading={sessionLoading} />
               )}
               {activeTab === 'track' && (
-                <TrackPage session={session} />
+                <TrackPage session={session} isLive={isLive} />
               )}
               {activeTab === 'schedule' && (
                 <SchedulePage />

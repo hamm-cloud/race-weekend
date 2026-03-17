@@ -6,6 +6,8 @@ interface TrackMapProps {
   drivers: Driver[]
   carPositions: Map<number, { x: number; y: number }>
   loading?: boolean
+  hasSession?: boolean
+  isLive?: boolean
 }
 
 // Silverstone-ish circuit path (simplified placeholder)
@@ -87,10 +89,17 @@ function normalizePositions(positions: Map<number, { x: number; y: number }>) {
   return { normalized, minX, minY, rangeX, rangeY }
 }
 
-export default function TrackMap({ drivers, carPositions }: TrackMapProps) {
+export default function TrackMap({ drivers, carPositions, hasSession = false, isLive = false }: TrackMapProps) {
   const useMock = carPositions.size === 0 || drivers.length === 0
   const displayPositions = useMock ? MOCK_POSITIONS : carPositions
   const displayDrivers = useMock ? MOCK_DRIVERS : drivers
+
+  // Status badge text — only show "DEMO" if there's genuinely no session
+  const statusBadge = useMock
+    ? hasSession
+      ? isLive ? null : 'SESSION ENDED'
+      : 'NO LIVE SESSION'
+    : isLive ? 'LIVE' : null
 
   const driverMap = new Map<number, Driver>()
   displayDrivers.forEach(d => driverMap.set(d.driver_number, d))
@@ -119,18 +128,18 @@ export default function TrackMap({ drivers, carPositions }: TrackMapProps) {
           >
             TRACK MAP
           </h2>
-          {useMock && (
+          {statusBadge && (
             <span
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontSize: '0.7rem',
-                color: '#666666',
+                color: statusBadge === 'LIVE' ? '#E8002D' : '#666666',
                 backgroundColor: '#1A1A1A',
                 padding: '0.25rem 0.5rem',
-                border: '1px solid #2A2A2A',
+                border: `1px solid ${statusBadge === 'LIVE' ? '#E8002D' : '#2A2A2A'}`,
               }}
             >
-              DEMO MODE
+              {statusBadge}
             </span>
           )}
         </div>
