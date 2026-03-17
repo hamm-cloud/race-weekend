@@ -93,16 +93,19 @@ function normalizePositions(positions: Map<number, { x: number; y: number }>) {
 
 export default function TrackMap({ drivers, carPositions, hasSession = false, isLive = false }: TrackMapProps) {
   const [fullscreen, setFullscreen] = useState(false)
-  const useMock = carPositions.size === 0 || drivers.length === 0
-  const displayPositions = useMock ? MOCK_POSITIONS : carPositions
-  const displayDrivers = useMock ? MOCK_DRIVERS : drivers
+  const hasRealPositions = carPositions.size > 0 && drivers.length > 0 && isLive
 
-  // Status badge text — only show "DEMO" if there's genuinely no session
-  const statusBadge = useMock
-    ? hasSession
-      ? isLive ? null : 'SESSION ENDED'
+  // Only use real data — mock dots are misleading (coords don't align to circuit path)
+  const displayPositions = hasRealPositions ? carPositions : new Map()
+  const displayDrivers = hasRealPositions ? drivers : []
+  const useMock = !hasRealPositions
+
+  // Status badge
+  const statusBadge = hasRealPositions
+    ? 'LIVE'
+    : hasSession
+      ? 'SESSION ENDED'
       : 'NO LIVE SESSION'
-    : isLive ? 'LIVE' : null
 
   const driverMap = new Map<number, Driver>()
   displayDrivers.forEach(d => driverMap.set(d.driver_number, d))
@@ -266,8 +269,27 @@ export default function TrackMap({ drivers, carPositions, hasSession = false, is
               </button>
             </div>
             {/* Fullscreen map */}
-            <div style={{ flex: 1, overflow: 'hidden', padding: '0.5rem' }}>
+            <div style={{ flex: 1, overflow: 'hidden', padding: '0.5rem', position: 'relative' }}>
               {mapSvg}
+              {useMock && (
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  pointerEvents: 'none',
+                }}>
+                  <div style={{
+                    backgroundColor: 'rgba(8,8,8,0.75)',
+                    border: '1px solid #2A2A2A',
+                    padding: '0.75rem 1.25rem',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.8rem',
+                    color: '#666',
+                    textAlign: 'center',
+                  }}>
+                    🏁 Live car positions available during active sessions
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -320,8 +342,27 @@ export default function TrackMap({ drivers, carPositions, hasSession = false, is
           </div>
         </div>
 
-        <div style={{ width: '100%', overflowX: 'auto' }}>
+        <div style={{ width: '100%', overflowX: 'auto', position: 'relative' }}>
           {mapSvg}
+          {useMock && (
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              pointerEvents: 'none',
+            }}>
+              <div style={{
+                backgroundColor: 'rgba(8,8,8,0.75)',
+                border: '1px solid #2A2A2A',
+                padding: '0.75rem 1.25rem',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.8rem',
+                color: '#666',
+                textAlign: 'center',
+              }}>
+                🏁 Live car positions available during active sessions
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
