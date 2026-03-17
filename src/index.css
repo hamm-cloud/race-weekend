@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --font-family-bebas: "Bebas Neue", cursive;
+  --font-family-inter: "Inter", sans-serif;
+  --color-primary: #080808;
+  --color-card: #111111;
+  --color-surface: #1A1A1A;
+  --color-border: #2A2A2A;
+  --color-live: #E8002D;
+  --color-text-primary: #F0F0F0;
+  --color-text-muted: #666666;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #080808;
+  color: #F0F0F0;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-bebas {
+  font-family: 'Bebas Neue', cursive;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2A2A2A;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3A3A3A;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
