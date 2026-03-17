@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Maximize2, X } from 'lucide-react'
 import { getTeamColor } from '../../lib/teamColors'
 import type { Driver } from '../../hooks/useOpenF1'
 
@@ -90,6 +92,7 @@ function normalizePositions(positions: Map<number, { x: number; y: number }>) {
 }
 
 export default function TrackMap({ drivers, carPositions, hasSession = false, isLive = false }: TrackMapProps) {
+  const [fullscreen, setFullscreen] = useState(false)
   const useMock = carPositions.size === 0 || drivers.length === 0
   const displayPositions = useMock ? MOCK_POSITIONS : carPositions
   const displayDrivers = useMock ? MOCK_DRIVERS : drivers
@@ -106,56 +109,18 @@ export default function TrackMap({ drivers, carPositions, hasSession = false, is
 
   const { normalized } = normalizePositions(displayPositions)
 
-  return (
-    <div>
-      <div
-        style={{
-          backgroundColor: '#111111',
-          border: '1px solid #2A2A2A',
-          padding: '1.5rem',
-          marginBottom: '1rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <h2
-            style={{
-              fontFamily: '"Bebas Neue", cursive',
-              fontSize: '1.5rem',
-              color: '#F0F0F0',
-              margin: 0,
-              letterSpacing: '0.05em',
-            }}
-          >
-            TRACK MAP
-          </h2>
-          {statusBadge && (
-            <span
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '0.7rem',
-                color: statusBadge === 'LIVE' ? '#E8002D' : '#666666',
-                backgroundColor: '#1A1A1A',
-                padding: '0.25rem 0.5rem',
-                border: `1px solid ${statusBadge === 'LIVE' ? '#E8002D' : '#2A2A2A'}`,
-              }}
-            >
-              {statusBadge}
-            </span>
-          )}
-        </div>
-
-        <div style={{ width: '100%', overflowX: 'auto' }}>
-          <svg
-            viewBox="0 0 800 600"
-            style={{
-              width: '100%',
-              maxWidth: '800px',
-              height: 'auto',
-              display: 'block',
-              margin: '0 auto',
-              backgroundColor: '#0D0D0D',
-            }}
-          >
+  const mapSvg = (
+    <svg
+      viewBox="0 0 800 600"
+      style={{
+        width: '100%',
+        height: fullscreen ? '100%' : 'auto',
+        maxWidth: fullscreen ? 'none' : '800px',
+        display: 'block',
+        margin: '0 auto',
+        backgroundColor: '#0D0D0D',
+      }}
+    >
             {/* Grid lines */}
             {[...Array(8)].map((_, i) => (
               <line key={`vg-${i}`} x1={i * 100 + 50} y1={0} x2={i * 100 + 50} y2={600} stroke="#1A1A1A" strokeWidth={1} />
@@ -243,7 +208,120 @@ export default function TrackMap({ drivers, carPositions, hasSession = false, is
                 )
               })}
             </AnimatePresence>
-          </svg>
+    </svg>
+  )
+
+  return (
+    <>
+      {/* Fullscreen overlay */}
+      <AnimatePresence>
+        {fullscreen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 300,
+              backgroundColor: '#080808',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Fullscreen header */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0.75rem 1rem',
+              borderBottom: '1px solid #2A2A2A',
+              flexShrink: 0,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontFamily: '"Bebas Neue", cursive', fontSize: '1.25rem', color: '#F0F0F0', letterSpacing: '0.05em' }}>
+                  TRACK MAP
+                </span>
+                {statusBadge && (
+                  <span style={{
+                    fontFamily: 'Inter, sans-serif', fontSize: '0.65rem',
+                    color: statusBadge === 'LIVE' ? '#E8002D' : '#666',
+                    border: `1px solid ${statusBadge === 'LIVE' ? '#E8002D' : '#2A2A2A'}`,
+                    padding: '0.2rem 0.4rem',
+                  }}>
+                    {statusBadge}
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={() => setFullscreen(false)}
+                style={{
+                  background: '#1A1A1A', border: '1px solid #2A2A2A',
+                  color: '#999', width: '36px', height: '36px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', borderRadius: '4px',
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            {/* Fullscreen map */}
+            <div style={{ flex: 1, overflow: 'hidden', padding: '0.5rem' }}>
+              {mapSvg}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+    <div>
+      <div
+        style={{
+          backgroundColor: '#111111',
+          border: '1px solid #2A2A2A',
+          padding: '1.5rem',
+          marginBottom: '1rem',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <h2
+            style={{
+              fontFamily: '"Bebas Neue", cursive',
+              fontSize: '1.5rem',
+              color: '#F0F0F0',
+              margin: 0,
+              letterSpacing: '0.05em',
+            }}
+          >
+            TRACK MAP
+          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {statusBadge && (
+              <span style={{
+                fontFamily: 'Inter, sans-serif', fontSize: '0.7rem',
+                color: statusBadge === 'LIVE' ? '#E8002D' : '#666666',
+                backgroundColor: '#1A1A1A', padding: '0.25rem 0.5rem',
+                border: `1px solid ${statusBadge === 'LIVE' ? '#E8002D' : '#2A2A2A'}`,
+              }}>
+                {statusBadge}
+              </span>
+            )}
+            <button
+              onClick={() => setFullscreen(true)}
+              title="Fullscreen"
+              style={{
+                background: '#1A1A1A', border: '1px solid #2A2A2A',
+                color: '#999', width: '32px', height: '32px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', borderRadius: '4px',
+              }}
+            >
+              <Maximize2 size={14} />
+            </button>
+          </div>
+        </div>
+
+        <div style={{ width: '100%', overflowX: 'auto' }}>
+          {mapSvg}
         </div>
       </div>
 
@@ -289,5 +367,6 @@ export default function TrackMap({ drivers, carPositions, hasSession = false, is
         </div>
       </div>
     </div>
+    </>
   )
 }
