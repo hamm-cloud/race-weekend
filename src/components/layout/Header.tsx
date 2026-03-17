@@ -1,8 +1,8 @@
 import { Flag } from 'lucide-react'
 import LiveBadge from '../ui/LiveBadge'
+import { useIsMobile } from '../../hooks/useIsMobile'
 import type { Session } from '../../hooks/useOpenF1'
-
-type Tab = 'timing' | 'track' | 'schedule'
+import type { Tab } from '../../App'
 
 interface HeaderProps {
   session: Session | null
@@ -14,10 +14,14 @@ interface HeaderProps {
 const TABS: { key: Tab; label: string }[] = [
   { key: 'timing', label: 'TIMING' },
   { key: 'track', label: 'TRACK' },
+  { key: 'standings', label: 'STANDINGS' },
   { key: 'schedule', label: 'SCHEDULE' },
+  { key: 'drivers', label: 'DRIVERS' },
 ]
 
 export default function Header({ session, isLive, activeTab, onTabChange }: HeaderProps) {
+  const isMobile = useIsMobile()
+
   return (
     <header
       style={{
@@ -62,8 +66,8 @@ export default function Header({ session, isLive, activeTab, onTabChange }: Head
             </div>
           </div>
 
-          {/* Nav tabs */}
-          <nav style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+          {/* Nav tabs — hidden on mobile (BottomNav handles it) */}
+          <nav style={{ display: isMobile ? 'none' : 'flex', alignItems: 'center', gap: '0' }}>
             {TABS.map((tab) => (
               <button
                 key={tab.key}

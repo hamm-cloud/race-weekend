@@ -2,12 +2,16 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Header from './components/layout/Header'
 import Layout from './components/layout/Layout'
+import BottomNav from './components/layout/BottomNav'
 import TimingPage from './pages/TimingPage'
 import TrackPage from './pages/TrackPage'
 import SchedulePage from './pages/SchedulePage'
+import DriversPage from './pages/DriversPage'
+import StandingsPage from './pages/StandingsPage'
 import { useLatestSession } from './hooks/useOpenF1'
+import { useIsMobile } from './hooks/useIsMobile'
 
-type Tab = 'timing' | 'track' | 'schedule'
+export type Tab = 'timing' | 'track' | 'schedule' | 'drivers' | 'standings'
 
 const PAGE_VARIANTS = {
   initial: { opacity: 0, y: 8 },
@@ -18,6 +22,7 @@ const PAGE_VARIANTS = {
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('timing')
   const { session, loading: sessionLoading, isLive } = useLatestSession()
+  const isMobile = useIsMobile()
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#080808' }}>
@@ -28,27 +33,38 @@ export default function App() {
         onTabChange={setActiveTab}
       />
       <Layout>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            variants={PAGE_VARIANTS}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={{ duration: 0.2 }}
-          >
-            {activeTab === 'timing' && (
-              <TimingPage session={session} sessionLoading={sessionLoading} />
-            )}
-            {activeTab === 'track' && (
-              <TrackPage session={session} />
-            )}
-            {activeTab === 'schedule' && (
-              <SchedulePage />
-            )}
-          </motion.div>
-        </AnimatePresence>
+        <div style={{ paddingBottom: isMobile ? '70px' : '0' }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              variants={PAGE_VARIANTS}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.2 }}
+            >
+              {activeTab === 'timing' && (
+                <TimingPage session={session} sessionLoading={sessionLoading} />
+              )}
+              {activeTab === 'track' && (
+                <TrackPage session={session} />
+              )}
+              {activeTab === 'schedule' && (
+                <SchedulePage />
+              )}
+              {activeTab === 'drivers' && (
+                <DriversPage />
+              )}
+              {activeTab === 'standings' && (
+                <StandingsPage />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </Layout>
+      {isMobile && (
+        <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      )}
     </div>
   )
 }
