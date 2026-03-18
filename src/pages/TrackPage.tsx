@@ -18,6 +18,7 @@ export default function TrackPage({ session, isLive }: TrackPageProps) {
       loading={!session}
       hasSession={!!session}
       isLive={isLive}
+      circuitKey={session?.circuit_key ?? null}
     />
   )
 }

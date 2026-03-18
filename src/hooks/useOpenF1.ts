@@ -213,7 +213,7 @@ export function useCarPositions(sessionKey: number | null, pollInterval: number 
   const fetchPositions = useCallback(async () => {
     if (!sessionKey) return
 
-    const data = await fetchFromAPI<Position>('/position', { session_key: sessionKey })
+    const data = await fetchFromAPI<Position>('/location', { session_key: sessionKey })
     const posMap = new Map<number, { x: number; y: number; date: string }>()
 
     for (const pos of data) {
