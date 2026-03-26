@@ -6,12 +6,13 @@ import BottomNav from './components/layout/BottomNav'
 import TimingPage from './pages/TimingPage'
 import TrackPage from './pages/TrackPage'
 import SchedulePage from './pages/SchedulePage'
-import DriversPage from './pages/DriversPage'
 import StandingsPage from './pages/StandingsPage'
+import ResultsPage from './pages/ResultsPage'
+import StrategyPage from './pages/StrategyPage'
 import { useLatestSession } from './hooks/useOpenF1'
 import { useIsMobile } from './hooks/useIsMobile'
 
-export type Tab = 'timing' | 'track' | 'schedule' | 'drivers' | 'standings'
+export type Tab = 'timing' | 'track' | 'schedule' | 'standings' | 'results' | 'strategy'
 
 const PAGE_VARIANTS = {
   initial: { opacity: 0, y: 8 },
@@ -52,11 +53,14 @@ export default function App() {
               {activeTab === 'schedule' && (
                 <SchedulePage />
               )}
-              {activeTab === 'drivers' && (
-                <DriversPage />
-              )}
               {activeTab === 'standings' && (
                 <StandingsPage />
+              )}
+              {activeTab === 'results' && (
+                <ResultsPage />
+              )}
+              {activeTab === 'strategy' && (
+                <StrategyPage session={session} />
               )}
             </motion.div>
           </AnimatePresence>

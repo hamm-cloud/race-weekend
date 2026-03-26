@@ -1,6 +1,6 @@
-import { Timer, Map, BarChart2, Calendar, Users } from 'lucide-react'
+import { Timer, Map, Calendar, BarChart2, ListOrdered, TrendingUp } from 'lucide-react'
 
-type Tab = 'timing' | 'track' | 'standings' | 'schedule' | 'drivers'
+type Tab = 'timing' | 'track' | 'schedule' | 'standings' | 'results' | 'strategy'
 
 interface NavItem {
   key: Tab
@@ -11,9 +11,10 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { key: 'timing', label: 'Timing', icon: Timer },
   { key: 'track', label: 'Track', icon: Map },
-  { key: 'standings', label: 'Standings', icon: BarChart2 },
   { key: 'schedule', label: 'Schedule', icon: Calendar },
-  { key: 'drivers', label: 'Drivers', icon: Users },
+  { key: 'standings', label: 'Standings', icon: BarChart2 },
+  { key: 'results', label: 'Results', icon: ListOrdered },
+  { key: 'strategy', label: 'Strategy', icon: TrendingUp },
 ]
 
 interface BottomNavProps {
@@ -51,18 +52,18 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '3px',
+              gap: '2px',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               padding: 0,
             }}
           >
-            <Icon size={20} color={isActive ? '#E8002D' : '#555'} />
+            <Icon size={18} color={isActive ? '#E8002D' : '#555'} />
             <span
               style={{
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '9px',
+                fontSize: '8px',
                 color: isActive ? '#E8002D' : '#555',
                 letterSpacing: 0,
               }}

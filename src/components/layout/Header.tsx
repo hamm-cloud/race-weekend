@@ -14,9 +14,10 @@ interface HeaderProps {
 const TABS: { key: Tab; label: string }[] = [
   { key: 'timing', label: 'TIMING' },
   { key: 'track', label: 'TRACK' },
-  { key: 'standings', label: 'STANDINGS' },
   { key: 'schedule', label: 'SCHEDULE' },
-  { key: 'drivers', label: 'DRIVERS' },
+  { key: 'standings', label: 'STANDINGS' },
+  { key: 'results', label: 'RESULTS' },
+  { key: 'strategy', label: 'STRATEGY' },
 ]
 
 export default function Header({ session, isLive, activeTab, onTabChange }: HeaderProps) {
@@ -67,24 +68,25 @@ export default function Header({ session, isLive, activeTab, onTabChange }: Head
           </div>
 
           {/* Nav tabs — hidden on mobile (BottomNav handles it) */}
-          <nav style={{ display: isMobile ? 'none' : 'flex', alignItems: 'center', gap: '0' }}>
+          <nav style={{ display: isMobile ? 'none' : 'flex', alignItems: 'center', gap: '0', overflowX: 'auto' }}>
             {TABS.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => onTabChange(tab.key)}
                 style={{
-                  padding: '0 1.25rem',
+                  padding: '0 1rem',
                   height: '64px',
                   background: 'none',
                   border: 'none',
                   borderBottom: activeTab === tab.key ? '2px solid #F0F0F0' : '2px solid transparent',
                   color: activeTab === tab.key ? '#F0F0F0' : '#666666',
                   fontFamily: 'Inter, sans-serif',
-                  fontSize: '0.75rem',
+                  fontSize: '0.7rem',
                   fontWeight: 600,
                   letterSpacing: '0.1em',
                   cursor: 'pointer',
                   transition: 'color 0.15s, border-color 0.15s',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {tab.label}
