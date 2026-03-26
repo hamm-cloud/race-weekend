@@ -23,7 +23,8 @@ interface Props {
   sessionLoading: boolean
 }
 
-const BACKEND_URL = 'http://127.0.0.1:8000'
+// Use environment variable or default to Railway backend URL when deployed
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000'
 
 export default function TelemetryPage({ session, sessionLoading }: Props) {
   const [telemetry, setTelemetry] = useState<TelemetryData | null>(null)

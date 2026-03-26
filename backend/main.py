@@ -14,6 +14,10 @@ from typing import Optional
 import fastf1
 import logging
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI(
     title="Race Weekend Backend",
@@ -137,4 +141,6 @@ async def get_live():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
+    port = int(os.getenv("PORT", 8000))
+    host = "0.0.0.0"  # Listen on all interfaces for production
+    uvicorn.run(app, host=host, port=port, log_level="info")
