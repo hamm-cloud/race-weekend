@@ -9,10 +9,11 @@ import SchedulePage from './pages/SchedulePage'
 import StandingsPage from './pages/StandingsPage'
 import ResultsPage from './pages/ResultsPage'
 import StrategyPage from './pages/StrategyPage'
+import TelemetryPage from './pages/TelemetryPage'
 import { useLatestSession } from './hooks/useOpenF1'
 import { useIsMobile } from './hooks/useIsMobile'
 
-export type Tab = 'timing' | 'track' | 'schedule' | 'standings' | 'results' | 'strategy'
+export type Tab = 'timing' | 'track' | 'schedule' | 'standings' | 'results' | 'strategy' | 'telemetry'
 
 const PAGE_VARIANTS = {
   initial: { opacity: 0, y: 8 },
@@ -61,6 +62,9 @@ export default function App() {
               )}
               {activeTab === 'strategy' && (
                 <StrategyPage session={session} />
+              )}
+              {activeTab === 'telemetry' && (
+                <TelemetryPage session={session} sessionLoading={sessionLoading} />
               )}
             </motion.div>
           </AnimatePresence>

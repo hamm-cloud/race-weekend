@@ -1,6 +1,6 @@
-import { Timer, Map, Calendar, BarChart2, ListOrdered, TrendingUp } from 'lucide-react'
+import { Timer, Map, Calendar, BarChart2, ListOrdered, TrendingUp, Activity } from 'lucide-react'
 
-type Tab = 'timing' | 'track' | 'schedule' | 'standings' | 'results' | 'strategy'
+type Tab = 'timing' | 'track' | 'schedule' | 'standings' | 'results' | 'strategy' | 'telemetry'
 
 interface NavItem {
   key: Tab
@@ -14,6 +14,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'schedule', label: 'Schedule', icon: Calendar },
   { key: 'standings', label: 'Standings', icon: BarChart2 },
   { key: 'results', label: 'Results', icon: ListOrdered },
+  { key: 'telemetry', label: 'Telemetry', icon: Activity },
   { key: 'strategy', label: 'Strategy', icon: TrendingUp },
 ]
 
